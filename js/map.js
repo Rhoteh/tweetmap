@@ -4,13 +4,11 @@ var markersArray = [];
 // On document ready
 $(document).ready( function () {
 
-	// Use default location: New York City
+	// Use default location: Halifax
 	position = {
-		lat: 44.6492671,
-		lng: -63.6229474
+		lat: 44.6558461,
+		lng: -63.5835512
 	};
-
-
 
 
 	// Setup default map
@@ -30,21 +28,23 @@ function load_map(position) {
 	    zoom: 15,
 
 	    // One of three types of maps: ROADMAP, TERRAIN, SATELLITE
-	    mapTypeId: google.maps.MapTypeId.ROADMAP
+	    mapTypeId: google.maps.MapTypeId.ROADMAP,
+
+	    styles: [{"featureType":"poi","elementType":"all","stylers":[{"hue":"#000000"},{"saturation":-100},{"lightness":-100},{"visibility":"off"}]},{"featureType":"poi","elementType":"all","stylers":[{"hue":"#000000"},{"saturation":-100},{"lightness":-100},{"visibility":"off"}]},{"featureType":"administrative","elementType":"all","stylers":[{"hue":"#000000"},{"saturation":0},{"lightness":-100},{"visibility":"off"}]},{"featureType":"road","elementType":"labels","stylers":[{"hue":"#ffffff"},{"saturation":-100},{"lightness":100},{"visibility":"off"}]},{"featureType":"water","elementType":"labels","stylers":[{"hue":"#000000"},{"saturation":-100},{"lightness":-100},{"visibility":"off"}]},{"featureType":"road.local","elementType":"all","stylers":[{"hue":"#ffffff"},{"saturation":-100},{"lightness":100},{"visibility":"on"}]},{"featureType":"water","elementType":"geometry","stylers":[{"hue":"#ffffff"},{"saturation":-100},{"lightness":100},{"visibility":"on"}]},{"featureType":"transit","elementType":"labels","stylers":[{"hue":"#000000"},{"saturation":0},{"lightness":-100},{"visibility":"off"}]},{"featureType":"landscape","elementType":"labels","stylers":[{"hue":"#000000"},{"saturation":-100},{"lightness":-100},{"visibility":"off"}]},{"featureType":"road","elementType":"geometry","stylers":[{"hue":"#bbbbbb"},{"saturation":-100},{"lightness":26},{"visibility":"on"}]},{"featureType":"landscape","elementType":"geometry","stylers":[{"hue":"#dddddd"},{"saturation":-100},{"lightness":-3},{"visibility":"on"}]}]
 	};
 
 	// Map reference (global)
 	map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
+	infoWindow = new google.maps.InfoWindow({ width: 1300, disableAutoPan: true });
+
 	// When the bounds change, get tweets for current bounds
 	google.maps.event.addListener(map, 'idle', function() {
-
 
 		// var bounds =	map.getBounds().getSouthWest().lat() + "," +
 		// 				map.getBounds().getSouthWest().lng() + "," +
 		// 				map.getBounds().getNorthEast().lng() + "," +
 		// 				map.getBounds().getNorthEast().lng();
-
 
 		// Get radius of viewable region (in miles)
 		bounds = map.getBounds();
@@ -65,7 +65,7 @@ function load_map(position) {
 		var radius = r * Math.acos(Math.sin(lat1) * Math.sin(lat2) + 
 		Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1));
 
-		console.log(radius);
+		// console.log(radius);
 
 		clear_overlays();
 
@@ -101,19 +101,19 @@ function load_map(position) {
 			map.fitBounds(place.geometry.viewport);
 	    } else {
 			map.setCenter(place.geometry.location);
-			map.setZoom(15);
+			map.setZoom(19);
 	    }
 	});
 }
 
 function add_marker(geocode, tweet){
 
-	console.log(geocode);
+	// console.log(geocode);
 
 	// Marker Options
 	var markerOptions = {
 	    position: new google.maps.LatLng(geocode.lat, geocode.lng),
-    	animation: google.maps.Animation.DROP
+    	animation: google.maps.Animation.BOUNCE
 	};
 
 	// Marker reference 
@@ -124,16 +124,25 @@ function add_marker(geocode, tweet){
 
 	// Set marker
 	marker.setMap(map);
+	marker.setIcon('http://i.imgur.com/sDzG0hR.png');
 
-	// Setup marker info window
-	infoWindowOptions = {
-	   	content: tweet
-	};
+	// // Setup marker info window
+	// infoWindowOptions = {
+	//    	content: tweet
+	// };
 
-	var infoWindow = new google.maps.InfoWindow(infoWindowOptions);
+	// Tweet with profile image 
+	// var tweetHtml = "<img src='" + tweet.user.profile_image_url + "'><h1 class='username'>@" + tweet.user.screen_name + "</h1><p>" + tweet.text + "</p>";
+	
 
-	google.maps.event.addListener(marker,'click',function(e){	  
-		infoWindow.open(map, marker);	  
+	// Tweet without profile image 
+	var tweetHtml = "<h1 class='username'><a href='http://twitter.com/" + tweet.user.screen_name + "' target='_new'>@" + tweet.user.screen_name + "</a></h1><p>" + tweet.text + "</p>";
+
+	google.maps.event.addListener(marker, 'click', function() {
+		marker.setAnimation(null);
+		marker.setIcon("http://i.imgur.com/faNkQRd.png");
+		infoWindow.setContent(tweetHtml);
+		infoWindow.open(map, this);
 	});
 
 }
@@ -180,13 +189,22 @@ function get_tweets(position, radius) {
             	position: position,
             	radius: radius
             },
+            beforeSend: function () {
+  				$("#loader").html('<img src="http://www.wordcurl.com/twitter-loader-128.gif" />').fadeIn();
+			},
+
             success: function(response) {
+
+            	var counter = 0;
+
+            	$('#loader').fadeOut();
 
                 var results = $.parseJSON(response);
 
-                console.log(results);
+                // console.log(results);
 
                 $.each(results.statuses, function(index, tweet) {
+
 
                     try {
 
@@ -196,7 +214,13 @@ function get_tweets(position, radius) {
                         };
 
                         // console.log(tweet.text);
-                        add_marker(geocode, tweet.text);
+
+                        setTimeout( function() {
+                        	add_marker(geocode, tweet);
+                        	}, index * 25);
+
+
+                        counter += 1;
 
                     } catch (e) {
 
@@ -204,7 +228,7 @@ function get_tweets(position, radius) {
 
                 });
 
-
+                toastr.info("Showing "  + counter + ' tweets found in this area.');
             }
         });
 }

@@ -6,9 +6,11 @@ require_once($_SERVER['DOCUMENT_ROOT'].'/twitteroauth/class/twitteroauth.php');
 // Tweet filters
 $position = "";
 $position = $_GET['position'];
-
 $radius = "";
 $radius = $_GET['radius'];
+
+// Reduce the radius to account for monitor aspect ratio
+$radius /= 1.77;
  
 // Authentication credentials via http://developer.twitter.com
 $consumerkey = "YNbYtwtl1zkwndMSEMh30A";
@@ -20,11 +22,9 @@ $accesstokensecret = "l7bc0cSu0TMetxF4Ly9fmVJmGLIHYkjmNdF5GbfkRcDTi";
 $conn = new TwitterOAuth($consumerkey, $consumersecret, $accesstoken, $accesstokensecret);
 
 // Get the latest tweets
-$tweets = $conn->get("https://api.twitter.com/1.1/search/tweets.json?geocode=" . $position . "," . $radius . "mi");
+$tweets = $conn->get("https://api.twitter.com/1.1/search/tweets.json?geocode=" . $position . "," . $radius/2 . "mi" . "&count=99");
 
 // Response
-// echo json_encode($tweets);
-
-echo $position . "      " .$radius;
+ echo json_encode($tweets);
 
 ?>
