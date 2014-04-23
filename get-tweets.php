@@ -13,10 +13,10 @@ $radius = $_GET['radius'];
 $radius /= 1.77;
  
 // Authentication credentials via http://developer.twitter.com
-$consumerkey = "YNbYtwtl1zkwndMSEMh30A";
-$consumersecret = "JCOdqDrmYQ2rATR2ry4NYGxEG16ZY6kFUxeruIkv6w";
-$accesstoken = "298116056-Ggoi7CT3KXW3IucqcVbBX7crMp4nlq1leVnib4BM";
-$accesstokensecret = "l7bc0cSu0TMetxF4Ly9fmVJmGLIHYkjmNdF5GbfkRcDTi";
+$consumerkey = "redacted";
+$consumersecret = "redacted";
+$accesstoken = "redacted";
+$accesstokensecret = "redacted";
 
 // Create a connection
 $conn = new TwitterOAuth($consumerkey, $consumersecret, $accesstoken, $accesstokensecret);
