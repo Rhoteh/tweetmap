@@ -56,6 +56,11 @@ table {
 
 /* Custom */
 
+.navbar-brand {
+	font-family: 'Lobster', cursive;
+	font-size: 21px !important;
+}
+
 html, body {
   height: 100%;
   margin: 0;
@@ -140,4 +145,8 @@ p {
 	margin-left: -78px;
 	display: none;
 	z-index: 100;
+}
+
+#toast-container>.toast-info {
+	margin-top: 48px;
 }

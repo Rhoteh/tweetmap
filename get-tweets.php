@@ -10,7 +10,7 @@ $radius = "";
 $radius = $_GET['radius'];
 
 // Reduce the radius to account for monitor aspect ratio
-$radius /= 1.77;
+$radius /= 1.4;
  
 // Authentication credentials via http://developer.twitter.com
 $consumerkey = "YNbYtwtl1zkwndMSEMh30A";
@@ -22,7 +22,7 @@ $accesstokensecret = "l7bc0cSu0TMetxF4Ly9fmVJmGLIHYkjmNdF5GbfkRcDTi";
 $conn = new TwitterOAuth($consumerkey, $consumersecret, $accesstoken, $accesstokensecret);
 
 // Get the latest tweets
-$tweets = $conn->get("https://api.twitter.com/1.1/search/tweets.json?geocode=" . $position . "," . $radius . "mi" . "&count=99");
+$tweets = $conn->get("https://api.twitter.com/1.1/search/tweets.json?geocode=" . $position . "," . $radius . "mi" . "&count=200");
 
 // Response
  echo json_encode($tweets);
