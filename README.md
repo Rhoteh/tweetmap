@@ -1,10 +1,10 @@
 tweetmap
 ========
 
-> [tweetmap.jonny.me](http://tweetmap.jonny.me)
+> [jonny.me/tweetmap](http://jonny.me/tweetmap)
 
 
 #TODO
 - Add clustering
-- Account for aspect ratio of monitor with geocode radius
+- Account for aspect ratio of monitor with geocodes radius
 - Keyword and hashtag searching

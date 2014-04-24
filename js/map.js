@@ -51,7 +51,7 @@ function load_map(position) {
 	google.maps.event.addListener(map, 'idle', function() {
 
 		// Clear previous markers (i.e tweets)
-		clear_overlays();
+		clear_markers();
 
 		// Get the bounds of the viewable region (in miles)
 		var bounds = map.getBounds();
@@ -148,17 +148,9 @@ function handle_geolocation_query(position){
 	load_map(position);
 }
 
-// Clear all tweet markers
-function clear_markers(){
-	google.maps.Map.prototype.clearMarkers = function() {
-	for(var i=0; i < map.markers.length; i++){
-		map.markers[i].setMap(null);
-	}
-		map.markers = new Array();
-	};
-}
 
-function clear_overlays() {
+// Clear all markers
+function clear_markers() {
 	for (var i = 0; i < markersArray.length; i++ ) {
 		markersArray[i].setMap(null);
 	}
@@ -210,9 +202,6 @@ function get_tweets(position, radius) {
                     }
 
                 });
-
-                // Clear any previous notifications
-                toastr.clear();
 
                 // Position the notification toast to the bottom right of the window
                 toastr.options = {
