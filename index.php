@@ -24,7 +24,7 @@
 </head>
 <body>
 
-<div class="container-fluid navbar-default">
+<div class="container-fluid navbar-inverse">
 	<!-- Brand and toggle get grouped for better mobile display -->
 	<div class="navbar-header">
 		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -39,6 +39,19 @@
 	<div class="collapse navbar-collapse navbar-right" id="bs-example-navbar-collapse-1">
 		<ul class="nav navbar-nav">
 			<li><a id="btn_mylocation" href="#">My Location</a></li>
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Change Style<b class="caret"></b></a>
+				<ul class="dropdown-menu" id="styles">
+					<li><a data-mapstyle="pale_dawn" href="#">Pale Dawn</a></li>
+					<li><a data-mapstyle="blue_water" href="#">Blue Water</a></li>
+					<li><a data-mapstyle="gowalla" href="#">Gowalla</a></li>
+					<li><a data-mapstyle="flatmap" href="#">Flatmap</a></li>
+					<li><a data-mapstyle="advocado_world" href="#">Advocado World</a></li>
+					<li><a data-mapstyle="subtle_grayscale" href="#">Subtle Grayscale</a></li>
+						<li class="divider"></li>
+					<li><a href="http://snazzymaps.com" target="_new">More styles</a></li>
+				</ul>
+			</li>
 			<li class="dropdown">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
 				<ul class="dropdown-menu">
