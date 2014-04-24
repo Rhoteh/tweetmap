@@ -150,3 +150,7 @@ p {
 #toast-container>.toast-info {
 	margin-top: 48px;
 }
+
+.glyphicon {
+	margin-left: 10px;
+}
