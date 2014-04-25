@@ -16,6 +16,8 @@ current_style = styles.subtle_grayscale;
 
 $(document).ready( function () {
 
+	$('#btn_mylocation').tooltip();
+
 	// Use default location: Halifax
 	position = {
 		lat: 44.6558461,
@@ -182,6 +184,7 @@ function handle_geolocation_query(position){
 		lat: position.coords.latitude,
 		lng: position.coords.longitude
 	};
+
 	load_map(position);
 }
 
