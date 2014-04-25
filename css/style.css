@@ -199,8 +199,8 @@ p {
 	overflow: hidden !important;
 }
 
-.navbar-brand a {
-	color: #000;
+.navbar-inverse .navbar-brand {
+	color: #FFF !important;
 }
 
 #btn_mylocation {
