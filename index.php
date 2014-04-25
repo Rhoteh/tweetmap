@@ -38,7 +38,7 @@
 	<!-- Collect the nav links, forms, and other content for toggling -->
 	<div class="collapse navbar-collapse navbar-right" id="bs-example-navbar-collapse-1">
 		<ul class="nav navbar-nav">
-			<li><a id="btn_mylocation" href="#">My Location</a></li>
+			<li><a id="btn_mylocation" href="#" data-toggle="tooltip" data-placement="bottom" title="Tweets Near You "><span class="glyphicon glyphicon-screenshot"></span></a></li>
 			<li class="dropdown">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Change Style<b class="caret"></b></a>
 				<ul class="dropdown-menu" id="styles">

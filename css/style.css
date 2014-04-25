@@ -202,3 +202,11 @@ p {
 .navbar-brand a {
 	color: #000;
 }
+
+#btn_mylocation {
+	font-size: 18px
+}
+
+.tooltip-inner {
+    width: 120px;
+}
