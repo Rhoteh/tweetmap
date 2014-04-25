@@ -1,9 +1,8 @@
 // Global: Array to hold markers so they can be cleared as an overlay
-var markersArray = [];
+var markers_array = [];
 
-// Google Maps styles object
+// Global: Google Maps styles object
 var styles = {
-
 	advocado_world: [{"featureType":"water","elementType":"geometry","stylers":[{"visibility":"on"},{"color":"#aee2e0"}]},{"featureType":"landscape","elementType":"geometry.fill","stylers":[{"color":"#abce83"}]},{"featureType":"poi","elementType":"geometry.fill","stylers":[{"color":"#769E72"}]},{"featureType":"poi","elementType":"labels.text.fill","stylers":[{"color":"#7B8758"}]},{"featureType":"poi","elementType":"labels.text.stroke","stylers":[{"color":"#EBF4A4"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"visibility":"simplified"},{"color":"#8dab68"}]},{"featureType":"road","elementType":"geometry.fill","stylers":[{"visibility":"simplified"}]},{"featureType":"road","elementType":"labels.text.fill","stylers":[{"color":"#5B5B3F"}]},{"featureType":"road","elementType":"labels.text.stroke","stylers":[{"color":"#ABCE83"}]},{"featureType":"road","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#A4C67D"}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#9BBF72"}]},{"featureType":"road.highway","elementType":"geometry","stylers":[{"color":"#EBF4A4"}]},{"featureType":"transit","stylers":[{"visibility":"off"}]},{"featureType":"administrative","elementType":"geometry.stroke","stylers":[{"visibility":"on"},{"color":"#87ae79"}]},{"featureType":"administrative","elementType":"geometry.fill","stylers":[{"color":"#7f2200"},{"visibility":"off"}]},{"featureType":"administrative","elementType":"labels.text.stroke","stylers":[{"color":"#ffffff"},{"visibility":"on"},{"weight":4.1}]},{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#495421"}]},{"featureType":"administrative.neighborhood","elementType":"labels","stylers":[{"visibility":"off"}]}],
 	pale_dawn: [{"featureType":"water","stylers":[{"visibility":"on"},{"color":"#acbcc9"}]},{"featureType":"landscape","stylers":[{"color":"#f2e5d4"}]},{"featureType":"road.highway","elementType":"geometry","stylers":[{"color":"#c5c6c6"}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#e4d7c6"}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#fbfaf7"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#c5dac6"}]},{"featureType":"administrative","stylers":[{"visibility":"on"},{"lightness":33}]},{"featureType":"road"},{"featureType":"poi.park","elementType":"labels","stylers":[{"visibility":"on"},{"lightness":20}]},{},{"featureType":"road","stylers":[{"lightness":20}]}],
 	blue_water: [{"featureType":"water","stylers":[{"color":"#46bcec"},{"visibility":"on"}]},{"featureType":"landscape","stylers":[{"color":"#f2f2f2"}]},{"featureType":"road","stylers":[{"saturation":-100},{"lightness":45}]},{"featureType":"road.highway","stylers":[{"visibility":"simplified"}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#444444"}]},{"featureType":"transit","stylers":[{"visibility":"off"}]},{"featureType":"poi","stylers":[{"visibility":"off"}]}],
@@ -13,7 +12,7 @@ var styles = {
 }
 
 // Global: Use flatmap as the default style
-current_style = styles.flatmap;
+current_style = styles.subtle_grayscale;
 
 $(document).ready( function () {
 
@@ -31,15 +30,18 @@ $(document).ready( function () {
 		initiate_geolocation();
 	});
 
+	// Add checkmark icon to default default style in dropdown
+	$( '#styles a[data-mapstyle=subtle_grayscale]' ).append( '<span id="selected-dropdown-item" class="glyphicon glyphicon-ok"></span>');
+
 	// Delegate click listener for map styles dropdown
 	$( '#styles' ).on( 'click', 'a[data-mapstyle]' , function() {
 		var style_name = $(this).data( 'mapstyle' );
 		current_style = styles[style_name];
 
-		// Remove icon from previously selected style
+		// Remove checkmark icon from previously selected style
 		$( 'span#selected-dropdown-item' ).remove();
 
-		// Append icon to show selected style
+		// Append checkmark icon to show selected style
 		$(this).append( '<span id="selected-dropdown-item" class="glyphicon glyphicon-ok"></span>');
 
 		load_map(position);
@@ -73,7 +75,13 @@ function load_map(position) {
 	map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
 	// Create a new InfoWindow object that does not autopan the map when a marker is clicked
-	infoWindow = new google.maps.InfoWindow({ width: 1300, disableAutoPan: true });
+	infoWindow = new google.maps.InfoWindow({
+		maxWidth: 500,
+		disableAutoPan: true,
+		boxStyle: {
+			width: "500px"
+		}
+	});
 
 	// Get tweets for current bounds when the map becomes idle after panning or zooming (use this instead of 'bounds_changed')
 	google.maps.event.addListener(map, 'idle', function() {
@@ -143,19 +151,21 @@ function add_marker(geocode, tweet){
 	var marker = new google.maps.Marker(markerOptions);
 
 	// Push marker to array so it can be cleared as a collection
-	markersArray.push(marker);
+	markers_array.push(marker);
 
 	// Add marker to map
 	marker.setMap(map);
-	marker.setIcon('http://i.imgur.com/sDzG0hR.png');
+	marker.setIcon('img/tweet-marker.png');
 
 	// Add tweet details to each marker
-	var tweetHtml = "<h1 class='username'><a href='http://twitter.com/" + tweet.user.screen_name + "' target='_new'>@" + tweet.user.screen_name + "</a></h1><p>" + tweet.text + "</p>";
+	var tweetHtml = "<div class='card'><div class='user'><a href='https://twitter.com/" +
+	tweet.user.screen_name + "' target='_new'><img src='" + tweet.user.profile_image_url + "'></div><div class='tweet'><a href='https://twitter.com/" + tweet.user.screen_name + "'  class='username' target='_new'>@" + 
+	tweet.user.name + "</a>" + tweet.text + "</div></div>";
 
 	// When a tweet is clicked: stop the bounce animation, replace with grayscale icon, close sibling markers, and open new marker 
 	google.maps.event.addListener(marker, 'click', function() {
 		marker.setAnimation(null);
-		marker.setIcon("http://i.imgur.com/faNkQRd.png");
+		marker.setIcon("img/tweet-marker-grayscale.png");
 		infoWindow.setContent(tweetHtml);
 		infoWindow.open(map, this);
 	});
@@ -168,7 +178,6 @@ function initiate_geolocation() {
  
 // Refresh the map using the end-user's users geolocation
 function handle_geolocation_query(position){
-
     position = {
 		lat: position.coords.latitude,
 		lng: position.coords.longitude
@@ -176,13 +185,12 @@ function handle_geolocation_query(position){
 	load_map(position);
 }
 
-
 // Clear all markers
 function clear_markers() {
-	for (var i = 0; i < markersArray.length; i++ ) {
-		markersArray[i].setMap(null);
+	for (var i = 0; i < markers_array.length; i++ ) {
+		markers_array[i].setMap(null);
 	}
-		markersArray.length = 0;
+		markers_array.length = 0;
 }
 
 // AJAX request to Twitter Search API 1.1
@@ -195,7 +203,7 @@ function get_tweets(position, radius) {
             	radius: radius
             },
             beforeSend: function () {
-  				$("#loader").html('<img src="http://www.wordcurl.com/twitter-loader-128.gif" />').fadeIn();
+  				$("#loader").html('<img src="img/loader.gif" />').fadeIn();
 			},
 
             success: function(response) {
@@ -210,10 +218,11 @@ function get_tweets(position, radius) {
             	// Response object. For more information, see: https://dev.twitter.com/docs/platform-objects
                 var results = $.parseJSON(response);
 
-                // Loop through each tweet in the statuses array
-                $.each(results.statuses, function(index, tweet) {
-                    try {
 
+            	// Loop through each tweet in the statuses array
+                $.each(results.statuses, function(index, tweet) {
+
+                    try {
                         var geocode = {
                             lat: tweet.coordinates.coordinates[1],
                             lng: tweet.coordinates.coordinates[0]
@@ -229,6 +238,7 @@ function get_tweets(position, radius) {
                     } catch (e) {
                     }
 
+                	
                 });
 
                 // Position the notification toast to the bottom right of the window
@@ -237,7 +247,7 @@ function get_tweets(position, radius) {
  				};
 
                 // Display the number of returned tweets with geocode data (i.e exclude literal locations)// 
-                toastr.info("Showing "  + counter + ' tweets found in this area.');
+                toastr.success("Showing "  + counter + ' tweets found in this area.');
             }
         });
 }
