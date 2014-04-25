@@ -71,7 +71,6 @@ html, body {
   margin: 0;
 }
 
-
 .controls {
 	margin-top: 16px;
 	border: 1px solid transparent;
@@ -153,4 +152,53 @@ p {
 
 .glyphicon {
 	margin-left: 10px;
+}
+
+
+
+* {
+   box-sizing: border-box; 
+}
+
+.card {
+    clear: both
+    float: left;
+}
+
+.user img {
+    padding: 5px;
+    height: 77px;
+}
+
+.tweet {
+	width: 500px;
+    font-size: 17px;
+	color: rgb(92, 92, 92);
+	padding-top: 4px;
+	padding-left: 69px;
+	margin-left: 10px;
+	padding-right: 10px;
+}
+
+.user {
+    float: left;
+    clear: both
+}
+
+.user a {
+	color: #007fff
+}
+
+.username {
+	font-weight: bold;
+	color: #000;
+	margin-right: 10px;
+}
+
+.gm-style-iw {
+	overflow: hidden !important;
+}
+
+.navbar-brand a {
+	color: #000;
 }
