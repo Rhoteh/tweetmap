@@ -12,7 +12,7 @@ var styles = {
 }
 
 // Global: Use flatmap as the default style
-current_style = styles.subtle_grayscale;
+current_style = styles.blue_water;
 
 $(document).ready( function () {
 
@@ -20,10 +20,10 @@ $(document).ready( function () {
 
 	// Use default location: Halifax
 	position = {
-		lat: 44.6558461,
-		lng: -63.5835512
+		lat: 44.6627716,
+		lng: -63.6048082
 	};
-
+	
 	// Setup default map
 	load_map(position);
 
@@ -32,8 +32,8 @@ $(document).ready( function () {
 		initiate_geolocation();
 	});
 
-	// Add checkmark icon to default default style in dropdown
-	$( '#styles a[data-mapstyle=subtle_grayscale]' ).append( '<span id="selected-dropdown-item" class="glyphicon glyphicon-ok"></span>');
+	// Add checkmark icon to default style in dropdown
+	$( '#styles a[data-mapstyle=blue_water]' ).append( '<span id="selected-dropdown-item" class="glyphicon glyphicon-ok"></span>');
 
 	// Delegate click listener for map styles dropdown
 	$( '#styles' ).on( 'click', 'a[data-mapstyle]' , function() {
@@ -121,7 +121,7 @@ function load_map(position) {
 	var input = document.getElementById('pac-input');
 	map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
-	var autocomplete = new google.maps.places.Autocomplete(input);
+	autocomplete = new google.maps.places.Autocomplete(input);
 	
 	// When a place is selected from the autocomplete
 	google.maps.event.addListener(autocomplete, 'place_changed', function() {
