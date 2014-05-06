@@ -1,7 +1,4 @@
-<!-- 		Author:			Jonny MacEachern
-			Date: 			31 March 2014 (Monday)
-			Description:	Special Topics: Deliverable 3 and 4 ("Capstone")
-  -->
+<!-- Author: Jonny MacEachern  -->
  
 <!doctype html>
 <html lang="en">
@@ -93,6 +90,7 @@
 	
 	<!-- Google Maps API --> 
 	<!-- Note: the sensor value specifies whether or not you are using the users geolocation. This is required.-->
+	<script src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js" type="text/javascript"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?sensor=true&libraries=places"></script>
 
 	<!-- Map options -->

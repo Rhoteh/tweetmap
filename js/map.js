@@ -1,5 +1,6 @@
 // Global: Array to hold markers so they can be cleared as an overlay
 var markers_array = [];
+var mc;
 
 // Global: Google Maps styles object
 var styles = {
@@ -12,7 +13,7 @@ var styles = {
 }
 
 // Global: Use flatmap as the default style
-current_style = styles.blue_water;
+current_style = styles.gowalla;
 
 $(document).ready( function () {
 
@@ -32,8 +33,8 @@ $(document).ready( function () {
 		initiate_geolocation();
 	});
 
-	// Add checkmark icon to default style in dropdown
-	$( '#styles a[data-mapstyle=blue_water]' ).append( '<span id="selected-dropdown-item" class="glyphicon glyphicon-ok"></span>');
+	// Add checkmark icon to default default style in dropdown
+	$( '#styles a[data-mapstyle=gowalla]' ).append( '<span id="selected-dropdown-item" class="glyphicon glyphicon-ok"></span>');
 
 	// Delegate click listener for map styles dropdown
 	$( '#styles' ).on( 'click', 'a[data-mapstyle]' , function() {
@@ -46,7 +47,10 @@ $(document).ready( function () {
 		// Append checkmark icon to show selected style
 		$(this).append( '<span id="selected-dropdown-item" class="glyphicon glyphicon-ok"></span>');
 
-		load_map(position);
+		mapOptions.styles = current_style;
+		mapOptions.zoom = map.getZoom();
+		mapOptions.center = map.getCenter();
+		map.setOptions(mapOptions);
 	});
 	
 	// TODO: Keyword search
@@ -58,7 +62,7 @@ $(document).ready( function () {
 
 function load_map(position) {
 
-	var mapOptions = {
+	mapOptions = {
 
 		// Location
 	    center: new google.maps.LatLng(position.lat, position.lng),
@@ -118,7 +122,7 @@ function load_map(position) {
 	});
 
 	// Setup search autocomplete
-	var input = document.getElementById('pac-input');
+	input = document.getElementById('pac-input');
 	map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
 	autocomplete = new google.maps.places.Autocomplete(input);
@@ -126,7 +130,7 @@ function load_map(position) {
 	// When a place is selected from the autocomplete
 	google.maps.event.addListener(autocomplete, 'place_changed', function() {
     
-	    var place = autocomplete.getPlace();
+	    place = autocomplete.getPlace();
 	    if (!place.geometry) {
 	      return;
 	    }
@@ -146,18 +150,15 @@ function add_marker(geocode, tweet){
 	// Tweet marker options
 	var markerOptions = {
 	    position: new google.maps.LatLng(geocode.lat, geocode.lng),
-    	animation: google.maps.Animation.BOUNCE
+	    optimized: false
+    	// animation: google.maps.Animation.BOUNCE
 	};
 
 	// Marker reference 
 	var marker = new google.maps.Marker(markerOptions);
 
-	// Push marker to array so it can be cleared as a collection
-	markers_array.push(marker);
-
 	// Add marker to map
-	marker.setMap(map);
-	marker.setIcon('img/tweet-marker.png');
+	marker.setIcon('img/tweet3.png');
 
 	// Add tweet details to each marker
 	var tweetHtml = "<div class='card'><div class='user'><a href='https://twitter.com/" +
@@ -167,10 +168,27 @@ function add_marker(geocode, tweet){
 	// When a tweet is clicked: stop the bounce animation, replace with grayscale icon, close sibling markers, and open new marker 
 	google.maps.event.addListener(marker, 'click', function() {
 		marker.setAnimation(null);
-		marker.setIcon("img/tweet-marker-grayscale.png");
+		marker.setIcon("img/tweet3-grayscale.png");
 		infoWindow.setContent(tweetHtml);
 		infoWindow.open(map, this);
+		google.maps.event.removeListener(mouseoverHandle);
 	});
+
+	var mouseoverHandle = google.maps.event.addListener(marker, 'mouseout', function() {
+    	infoWindow.close();	
+    });
+
+	google.maps.event.addListener(marker, 'mouseover', function() {
+		infoWindow.setContent(tweetHtml);
+		infoWindow.open( map, this)	
+	});
+
+	google.maps.event.addListener( map, 'click', function() {
+		infoWindow.close();	
+	});
+
+	// Push marker to array so it can be cleared as a collection
+	markers_array.push(marker);
 }
 
 // Get the end-user's geolocation (new HTML5 feature)
@@ -180,12 +198,10 @@ function initiate_geolocation() {
  
 // Refresh the map using the end-user's users geolocation
 function handle_geolocation_query(position){
-    position = {
-		lat: position.coords.latitude,
-		lng: position.coords.longitude
-	};
 
-	load_map(position);
+	var center = new google.maps.LatLng( position.coords.latitude, position.coords.longitude );
+    map.setCenter(center);
+
 }
 
 // Clear all markers
@@ -193,7 +209,12 @@ function clear_markers() {
 	for (var i = 0; i < markers_array.length; i++ ) {
 		markers_array[i].setMap(null);
 	}
-		markers_array.length = 0;
+	
+	markers_array.length = 0;
+
+	if ('undefined' !== typeof mc) {
+		mc.clearMarkers();
+	}
 }
 
 // AJAX request to Twitter Search API 1.1
@@ -232,9 +253,9 @@ function get_tweets(position, radius) {
                         };
 
                         // Set a 0.025 second delay on adding markers to the map
-                        setTimeout( function() {
+                        // setTimeout( function() {
                         	add_marker(geocode, tweet);
-                        	}, index * 25);
+                        	// }, index * 25);
 
                         counter += 1;
 
@@ -243,6 +264,20 @@ function get_tweets(position, radius) {
 
                 	
                 });
+
+                var mcOptions = {
+                	gridSize: 50,
+		            maxZoom: 18,
+		            styles: [{
+		            	textSize: 12,
+		            	textColor: "#FFFFFF",
+		            	height: 53,
+						url: "http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/images/m1.png",
+						width: 53
+						}]
+                };
+
+				mc = new MarkerClusterer(map, markers_array, mcOptions);
 
                 // Position the notification toast to the bottom right of the window
                 toastr.options = {
