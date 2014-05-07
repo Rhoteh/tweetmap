@@ -246,3 +246,20 @@ p {
 	font-size: 17px !important;
 	line-height: 28px !important;
 }
+
+.modal label {
+	margin-right: 26px !important;
+}
+
+input[type=checkbox] {
+	margin: 4px 4px 0 !important;
+}
+
+.btn-primary {
+	background: #4099FF !important;
+}
+
+kbd {
+	background: #F0F0F0 !important;
+	color: #868686 !important;
+}
