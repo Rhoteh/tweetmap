@@ -14,6 +14,10 @@
 	<link rel="stylesheet" href="css/style.css">
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 
+	<!-- Favicon -->
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+
 	<!-- Google Web Font -->
 	<link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
 
@@ -91,7 +95,7 @@
 					<tr><th>Shortcut</th><th>Description</th></tr>
 
 					<tr><td><kbd>TAB</kbd></td><td>Cycle through tweets</td></tr>
-					<tr><td><kbd>Shift+TAB</kbd></td><td>Cycle backwards through tweets</td></tr>
+					<tr><td><kbd>Shift + TAB</kbd></td><td>Cycle backwards through tweets</td></tr>
 
 					</table>
 				</div>	
