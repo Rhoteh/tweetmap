@@ -14,7 +14,7 @@ var styles = {
 }
 
 // Global: Use flatmap as the default style
-current_style = styles.gowalla;
+current_style = styles.subtle_grayscale;
 
 $(document).ready( function () {
 
@@ -41,7 +41,7 @@ $(document).ready( function () {
 	});
 
 	// Add checkmark icon to default default style in dropdown
-	$( '#styles a[data-mapstyle=gowalla]' ).append( '<span id="selected-dropdown-item" class="glyphicon glyphicon-ok"></span>');
+	$( '#styles a[data-mapstyle=subtle_grayscale]' ).append( '<span id="selected-dropdown-item" class="glyphicon glyphicon-ok"></span>');
 
 	// Delegate click listener for map styles dropdown
 	$( '#styles' ).on( 'click', 'a[data-mapstyle]' , function() {
@@ -200,6 +200,11 @@ function add_marker(geocode, tweet){
 		marker.setIcon("img/tweet3-grayscale.png");
 		infoWindow.setContent(tweetHtml);
 		infoWindow.open(map, this);
+
+		var iw_container = $(".gm-style-iw").parent();
+		iw_container.stop().hide();
+		iw_container.fadeIn(400);
+
 		google.maps.event.removeListener(mouseoverHandle);
 	});
 
@@ -209,7 +214,11 @@ function add_marker(geocode, tweet){
 
 	google.maps.event.addListener(marker, 'mouseover', function() {
 		infoWindow.setContent(tweetHtml);
-		infoWindow.open( map, this)	
+		infoWindow.open( map, this);
+
+		var iw_container = $(".gm-style-iw").parent();
+		iw_container.stop().hide();
+		iw_container.fadeIn(400);
 	});
 
 	google.maps.event.addListener( map, 'click', function() {
@@ -256,7 +265,7 @@ function get_tweets(position, radius) {
 			radius: radius
 		},
 		beforeSend: function () {
-			$("#loader").html('<img src="img/loader.gif" /><span>Fetching data...</span>').fadeIn();
+			$("#loader").stop().html('<img src="img/loader.gif" /><span>Fetching data...</span>').fadeIn(1000);
 		},
 
 		success: function(response) {
@@ -266,7 +275,7 @@ function get_tweets(position, radius) {
             	var counter = 0;
 
             	// Twitter loading GIF
-            	$('#loader').fadeOut().empty();
+            	$('#loader').fadeOut(1000);
 
             	// Response object. For more information, see: https://dev.twitter.com/docs/platform-objects
             	var results = $.parseJSON(response);
