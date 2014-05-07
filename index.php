@@ -81,7 +81,7 @@
 			</div>
 			<div class="modal-body">
 
-			<p class="buffer-bottom">Tweetmap shows you who is tweeting around you. To view a tweet, just hover over its icon on the map. If you wish to keep tweet expanded, click its icon. Panning or zooming will update the map.</p>
+			<p class="buffer-bottom">Tweetmap shows you who is tweeting around you. To view a tweet, just hover over its icon on the map. If you wish to a keep tweet expanded, click its icon. Panning or zooming will update the map.</p>
 
 
 			<div class="panel panel-default">
