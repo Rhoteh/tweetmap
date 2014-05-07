@@ -81,11 +81,11 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title" id="myModalLabel"><span class="glyphicon glyphicon-globe"></span>How to use Tweetmap</h4>
+				<h4 class="modal-title" id="myModalLabel"><span class="glyphicon glyphicon-globe"></span>Instructions</h4>
 			</div>
 			<div class="modal-body">
 
-			<p class="buffer-bottom">Tweetmap shows you who is tweeting around you. To view a tweet, just hover over its icon on the map. If you wish to a keep tweet expanded, click its icon. Panning or zooming will update the map.</p>
+			<p class="buffer-bottom">Tweetmap is a visual representation of what people are saying in your area. Just hover over an icon to see its message. Panning or zooming will update the map. It's suggested that you use the <kbd>TAB</kbd> key to cycle through crowded areas which contain overlapping tweets.</p>
 
 
 			<div class="panel panel-default">

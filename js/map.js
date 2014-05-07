@@ -18,6 +18,8 @@ current_style = styles.subtle_grayscale;
 
 $(document).ready( function () {
 
+	$( '#map' ).css( 'height', $(window).height() - 50 );
+
 	// Show instructions modal if cookie is undefined or false
 	if( ($.cookie('modal_dismiss') == undefined) || ($.cookie('modal_dismiss') == "false") ){
 		show_modal();
@@ -131,7 +133,7 @@ function load_map(position) {
 		var ne = bounds.getNorthEast();
 
 		// Radius of the earth in statute miles
-		var r = 3963.0;  
+		var r = 3963.0; 
 
 		// Convert lat or lng from decimal degrees to radians by dividing by 57.2958
 		var lat1 = center.lat() / 57.2958; 
@@ -142,6 +144,9 @@ function load_map(position) {
 		// Calculate the distance of the radius (center to Northeast corner of its bounds)
 		var radius = r * Math.acos(Math.sin(lat1) * Math.sin(lat2) + 
 			Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1));
+
+		console.log( "Radius: " + radius + " mi" );
+		console.log( "Zoom: " + map.getZoom() );
 
 		// Center of the map
 		var position = map.getCenter();
@@ -323,7 +328,7 @@ function get_tweets(position, radius) {
                 };
 
                 // Display the number of returned tweets with geocode data (i.e exclude literal locations)// 
-                toastr.success("Showing "  + counter + ' tweets found in this area.');
+                toastr.info("Showing "  + counter + ' tweets found in this area.');
             }
         });
 }
