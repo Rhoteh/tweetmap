@@ -1,6 +1,7 @@
 // Global: Array to hold markers so they can be cleared as an overlay
 var markers_array = [];
 var mc;
+var tabCount = -1;
 
 // Global: Google Maps styles object
 var styles = {
@@ -17,6 +18,12 @@ current_style = styles.gowalla;
 
 $(document).ready( function () {
 
+	// Show instructions modal if cookie is undefined or false
+	if( ($.cookie('modal_dismiss') == undefined) || ($.cookie('modal_dismiss') == "false") ){
+		show_modal();
+	}
+
+	// Initiate browser geolocation button tooltip
 	$('#btn_mylocation').tooltip();
 
 	// Use default location: Halifax
@@ -52,6 +59,28 @@ $(document).ready( function () {
 		mapOptions.center = map.getCenter();
 		map.setOptions(mapOptions);
 	});
+
+	// Add listener to instructions modal button
+	$( '#show_modal' ).on( 'click', function () {
+		show_modal();
+	});
+
+	// Tab to cycle through tweets
+	document.addEventListener( 'keydown', function (e) {
+		if (e.keyCode == '9') {
+
+			// Prevent tab default
+			e.preventDefault();
+
+			if (e.shiftKey && markers_array.length > 0 && tabCount > 0) {
+				tabCount --;
+				google.maps.event.trigger( markers_array[tabCount], 'click' );
+			} else if (markers_array.length > 0 && tabCount < (markers_array.length - 1) && e.shiftKey === false) {
+					tabCount++;
+					google.maps.event.trigger( markers_array[tabCount], 'click' );
+			}
+		}
+	});
 	
 	// TODO: Keyword search
 	$( '#btn_keyword' ).on( 'click', function() {
@@ -65,7 +94,7 @@ function load_map(position) {
 	mapOptions = {
 
 		// Location
-	    center: new google.maps.LatLng(position.lat, position.lng),
+		center: new google.maps.LatLng(position.lat, position.lng),
 
 	    // Zoom level (0 to 20 with 0 being the entire world)
 	    zoom: 15,
@@ -112,7 +141,7 @@ function load_map(position) {
 
 		// Calculate the distance of the radius (center to Northeast corner of its bounds)
 		var radius = r * Math.acos(Math.sin(lat1) * Math.sin(lat2) + 
-		Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1));
+			Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1));
 
 		// Center of the map
 		var position = map.getCenter();
@@ -129,18 +158,18 @@ function load_map(position) {
 	
 	// When a place is selected from the autocomplete
 	google.maps.event.addListener(autocomplete, 'place_changed', function() {
-    
-	    place = autocomplete.getPlace();
-	    if (!place.geometry) {
-	      return;
-	    }
+
+		place = autocomplete.getPlace();
+		if (!place.geometry) {
+			return;
+		}
 
 	    // If the place has a geometry, use it
 	    if (place.geometry.viewport) {
-			map.fitBounds(place.geometry.viewport);
+	    	map.fitBounds(place.geometry.viewport);
 	    } else {
-			console.log(map.setCenter(place.geometry.location));
-			map.setZoom(19);
+	    	console.log(map.setCenter(place.geometry.location));
+	    	map.setZoom(19);
 	    }
 	});
 }
@@ -149,10 +178,10 @@ function add_marker(geocode, tweet){
 
 	// Tweet marker options
 	var markerOptions = {
-	    position: new google.maps.LatLng(geocode.lat, geocode.lng),
-	    optimized: false
+		position: new google.maps.LatLng(geocode.lat, geocode.lng),
+		optimized: false
     	// animation: google.maps.Animation.BOUNCE
-	};
+    };
 
 	// Marker reference 
 	var marker = new google.maps.Marker(markerOptions);
@@ -175,8 +204,8 @@ function add_marker(geocode, tweet){
 	});
 
 	var mouseoverHandle = google.maps.event.addListener(marker, 'mouseout', function() {
-    	infoWindow.close();	
-    });
+		infoWindow.close();	
+	});
 
 	google.maps.event.addListener(marker, 'mouseover', function() {
 		infoWindow.setContent(tweetHtml);
@@ -193,14 +222,14 @@ function add_marker(geocode, tweet){
 
 // Get the end-user's geolocation (new HTML5 feature)
 function initiate_geolocation() {
-    navigator.geolocation.getCurrentPosition(handle_geolocation_query);
+	navigator.geolocation.getCurrentPosition(handle_geolocation_query);
 }
- 
+
 // Refresh the map using the end-user's users geolocation
 function handle_geolocation_query(position){
 
 	var center = new google.maps.LatLng( position.coords.latitude, position.coords.longitude );
-    map.setCenter(center);
+	map.setCenter(center);
 
 }
 
@@ -221,71 +250,84 @@ function clear_markers() {
 function get_tweets(position, radius) {
 
 	$.ajax({
-            url: 'get-tweets.php',
-            data: {
-            	position: position,
-            	radius: radius
-            },
-            beforeSend: function () {
-  				$("#loader").html('<img src="img/loader.gif" />').fadeIn();
-			},
+		url: 'get-tweets.php',
+		data: {
+			position: position,
+			radius: radius
+		},
+		beforeSend: function () {
+			$("#loader").html('<img src="img/loader.gif" /><span>Fetching data...</span>').fadeIn();
+		},
 
-            success: function(response) {
+		success: function(response) {
 
             	// When a bounds filter used, Twitter returns tweets with geocode data as well as locations within those bounds that are literal locations w/o geocode data
             	// Counts the number of tweets with usable geocode coordinates to used in notification
             	var counter = 0;
 
             	// Twitter loading GIF
-            	$('#loader').fadeOut();
+            	$('#loader').fadeOut().empty();
 
             	// Response object. For more information, see: https://dev.twitter.com/docs/platform-objects
-                var results = $.parseJSON(response);
+            	var results = $.parseJSON(response);
 
 
             	// Loop through each tweet in the statuses array
-                $.each(results.statuses, function(index, tweet) {
+            	$.each(results.statuses, function(index, tweet) {
 
-                    try {
-                        var geocode = {
-                            lat: tweet.coordinates.coordinates[1],
-                            lng: tweet.coordinates.coordinates[0]
-                        };
+            		try {
+            			var geocode = {
+            				lat: tweet.coordinates.coordinates[1],
+            				lng: tweet.coordinates.coordinates[0]
+            			};
 
                         // Set a 0.025 second delay on adding markers to the map
                         // setTimeout( function() {
                         	add_marker(geocode, tweet);
                         	// }, index * 25);
 
-                        counter += 1;
+            	counter += 1;
 
-                    } catch (e) {
-                    }
+            } catch (e) {
+            }
+        });
 
-                	
-                });
+            	tabCount = -1;
 
-                var mcOptions = {
-                	gridSize: 50,
-		            maxZoom: 18,
-		            styles: [{
-		            	textSize: 12,
-		            	textColor: "#FFFFFF",
-		            	height: 53,
-						url: "http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/images/m1.png",
-						width: 53
-						}]
-                };
+            	var mcOptions = {
+            		gridSize: 50,
+            		maxZoom: 18,
+            		styles: [{
+            			textSize: 12,
+            			textColor: "#FFFFFF",
+            			height: 53,
+            			url: "http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/images/m1.png",
+            			width: 53
+            		}]
+            	};
 
-				mc = new MarkerClusterer(map, markers_array, mcOptions);
+            	mc = new MarkerClusterer(map, markers_array, mcOptions);
 
                 // Position the notification toast to the bottom right of the window
                 toastr.options = {
- 					"positionClass": "toast-bottom-right"
- 				};
+                	"positionClass": "toast-bottom-right"
+                };
 
                 // Display the number of returned tweets with geocode data (i.e exclude literal locations)// 
                 toastr.success("Showing "  + counter + ' tweets found in this area.');
             }
         });
+}
+
+function show_modal () {
+
+	$('#instructionsModal').modal();
+
+	$('#instructionsModal').on('hide.bs.modal', function(e) {
+		var status = $("input[name=dismiss]", this).is(":checked");
+		$.cookie('modal_dismiss', status, {
+			expires: 7,
+			path: '/'
+		});
+	});
 }
