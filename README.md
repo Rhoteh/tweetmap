@@ -1,7 +1,7 @@
 tweetmap
 ========
 
-> [jonny.me/tweetmap](http://jonny.me/tweetmap)
+> [oadev.site/tweetmap](http://oadev.site/tweetmap)
 
 #TODO
 - Keyword and hashtag searching
